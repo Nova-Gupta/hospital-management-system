@@ -1,0 +1,13 @@
+from django.db import models
+from hospital.apps.appointments.models import Appointment
+
+class Prescription(models.Model):
+    appointment = models.OneToOneField(Appointment, on_delete=models.CASCADE, related_name='prescription')
+    diagnosis = models.TextField()
+    medications = models.JSONField(default=list)  # [{name, dosage, frequency, duration}]
+    instructions = models.TextField(blank=True)
+    follow_up_date = models.DateField(null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"Prescription for {self.appointment}"
