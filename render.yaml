@@ -33,14 +33,14 @@ services:
           property: port
       - key: REDIS_URL
         fromService:
-          name: hospital-redis
           type: redis
+          name: hospital-redis
           property: connectionString
+
+  - type: redis
+    name: hospital-redis
+    plan: free
 
 databases:
   - name: hospital-db
     plan: free
-
-  - name: hospital-redis
-    plan: free
-    type: redis
