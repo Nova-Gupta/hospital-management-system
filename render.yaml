@@ -40,6 +40,7 @@ services:
   - type: redis
     name: hospital-redis
     plan: free
+    ipAllowList: []
 
 databases:
   - name: hospital-db
