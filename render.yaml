@@ -1,0 +1,46 @@
+services:
+  - type: web
+    name: hospital-management-system
+    env: docker
+    plan: free
+    healthCheckPath: /admin/
+    envVars:
+      - key: SECRET_KEY
+        generateValue: true
+      - key: DEBUG
+        value: False
+      - key: ALLOWED_HOSTS
+        value: .onrender.com
+      - key: DB_HOST
+        fromDatabase:
+          name: hospital-db
+          property: host
+      - key: DB_NAME
+        fromDatabase:
+          name: hospital-db
+          property: database
+      - key: DB_USER
+        fromDatabase:
+          name: hospital-db
+          property: user
+      - key: DB_PASSWORD
+        fromDatabase:
+          name: hospital-db
+          property: password
+      - key: DB_PORT
+        fromDatabase:
+          name: hospital-db
+          property: port
+      - key: REDIS_URL
+        fromService:
+          name: hospital-redis
+          type: redis
+          property: connectionString
+
+databases:
+  - name: hospital-db
+    plan: free
+
+  - name: hospital-redis
+    plan: free
+    type: redis

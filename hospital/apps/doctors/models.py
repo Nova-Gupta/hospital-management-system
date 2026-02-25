@@ -19,5 +19,8 @@ class Doctor(models.Model):
     is_available = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
+    class Meta:
+        ordering = ['-created_at']
+
     def __str__(self):
         return f"Dr. {self.user.get_full_name()} - {self.specialization}"

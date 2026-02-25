@@ -20,5 +20,8 @@ class Patient(models.Model):
     medical_history = models.TextField(blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
+    class Meta:
+        ordering = ['-created_at']
+
     def __str__(self):
         return f"Patient: {self.user.get_full_name()}"

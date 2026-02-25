@@ -1,5 +1,6 @@
 from django.core.cache import cache
-from django.db.models import Sum, Count
+from django.db.models import Sum
+from django.utils import timezone
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from hospital.apps.accounts.permissions import IsAdmin
@@ -17,6 +18,7 @@ class DashboardView(APIView):
         stats = cache.get(DASHBOARD_CACHE_KEY)
 
         if not stats:
+            today = timezone.now().date()
             stats = {
                 'total_doctors': User.objects.filter(role='doctor').count(),
                 'total_patients': User.objects.filter(role='patient').count(),
@@ -27,7 +29,8 @@ class DashboardView(APIView):
                     payment_status='paid'
                 ).aggregate(total=Sum('total_amount'))['total'] or 0,
                 'monthly_appointments': Appointment.objects.filter(
-                    appointment_date__month=__import__('datetime').date.today().monthv
+                    appointment_date__month=today.month,
+                    appointment_date__year=today.year
                 ).count(),
             }
             cache.set(DASHBOARD_CACHE_KEY, stats, CACHE_TIMEOUT)

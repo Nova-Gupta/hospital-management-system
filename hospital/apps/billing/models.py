@@ -27,5 +27,8 @@ class Invoice(models.Model):
         self.total_amount = self.amount + self.tax - self.discount
         super().save(*args, **kwargs)
 
+    class Meta:
+        ordering = ['-created_at']
+
     def __str__(self):
         return f"Invoice #{self.id} - {self.payment_status}"
