@@ -8,7 +8,16 @@ class RegisterSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ('username', 'email', 'first_name', 'last_name', 'password', 'password2', 'role', 'phone')
+        fields = ('username', 'email', 'first_name', 'last_name',
+                  'password', 'password2', 'role', 'phone')
+
+    def validate_role(self, value):
+        # Block admin registration from API — admins are only created via Django admin panel
+        if value == 'admin':
+            raise serializers.ValidationError(
+                "Admin accounts cannot be created via registration. Contact the system administrator."
+            )
+        return value
 
     def validate(self, attrs):
         if attrs['password'] != attrs['password2']:

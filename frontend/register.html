@@ -11,17 +11,23 @@
     --teal2: #0096c7; --white: #f0f4f8; --gray: #8892a4; --error: #e63946;
   }
   * { margin: 0; padding: 0; box-sizing: border-box; }
-  body { min-height: 100vh; background: var(--navy); display: flex; align-items: center; justify-content: center; font-family: 'DM Sans', sans-serif; padding: 40px 20px; }
-  .box { width: 100%; max-width: 460px; background: var(--navy2); border: 1px solid rgba(255,255,255,0.08); border-radius: 20px; padding: 40px; }
+  body { min-height: 100vh; background: var(--navy); display: flex; align-items: center; justify-content: center; font-family: 'DM Sans', sans-serif; padding: 24px 16px; }
+  .box {
+    width: 100%; max-width: 480px;
+    background: var(--navy2);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 20px; padding: 36px 32px;
+  }
   .logo { text-align: center; margin-bottom: 28px; }
-  .logo-icon { font-size: 40px; margin-bottom: 10px; }
-  .logo h1 { font-family: 'Playfair Display', serif; font-size: 1.6rem; color: var(--white); }
+  .logo-icon { font-size: 36px; margin-bottom: 10px; }
+  .logo h1 { font-family: 'Playfair Display', serif; font-size: 1.5rem; color: var(--white); }
   .logo p { color: var(--gray); font-size: 0.85rem; margin-top: 4px; }
-  .form-group { margin-bottom: 16px; }
   .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  @media (max-width: 480px) { .form-row { grid-template-columns: 1fr; } .box { padding: 28px 20px; } }
+  .form-group { margin-bottom: 14px; }
   label { display: block; color: var(--gray); font-size: 0.75rem; font-weight: 500; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px; }
   input, select {
-    width: 100%; padding: 12px 14px;
+    width: 100%; padding: 11px 13px;
     background: rgba(255,255,255,0.05);
     border: 1px solid rgba(255,255,255,0.1);
     border-radius: 8px; color: var(--white);
@@ -29,22 +35,30 @@
     outline: none; transition: border-color 0.2s;
   }
   select option { background: var(--navy2); }
-  input:focus, select:focus { border-color: var(--teal); }
-  input::placeholder { color: rgba(136,146,164,0.5); }
+  input:focus, select:focus { border-color: var(--teal); box-shadow: 0 0 0 3px rgba(0,180,216,0.1); }
+  input::placeholder { color: rgba(136,146,164,0.4); }
+  .role-info {
+    background: rgba(0,180,216,0.06);
+    border: 1px solid rgba(0,180,216,0.15);
+    border-radius: 8px; padding: 10px 14px;
+    font-size: 0.8rem; color: var(--gray);
+    margin-bottom: 14px;
+  }
+  .role-info span { color: var(--teal); font-weight: 500; }
   .btn {
-    width: 100%; padding: 14px;
+    width: 100%; padding: 13px;
     background: linear-gradient(135deg, var(--teal), var(--teal2));
     border: none; border-radius: 10px; color: white;
-    font-size: 1rem; font-weight: 600; font-family: 'DM Sans', sans-serif;
-    cursor: pointer; transition: all 0.3s; margin-top: 8px;
+    font-size: 0.95rem; font-weight: 600; font-family: 'DM Sans', sans-serif;
+    cursor: pointer; transition: all 0.3s; margin-top: 6px;
   }
-  .btn:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,180,216,0.4); }
+  .btn:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,180,216,0.35); }
   .btn:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
-  .error { background: rgba(230,57,70,0.1); border: 1px solid rgba(230,57,70,0.3); color: #ff6b6b; padding: 12px 16px; border-radius: 8px; font-size: 0.85rem; margin-bottom: 16px; display: none; }
-  .success { background: rgba(46,204,113,0.1); border: 1px solid rgba(46,204,113,0.3); color: #2ecc71; padding: 12px 16px; border-radius: 8px; font-size: 0.85rem; margin-bottom: 16px; display: none; }
-  .login-link { text-align: center; margin-top: 20px; color: var(--gray); font-size: 0.875rem; }
-  .login-link a { color: var(--teal); text-decoration: none; font-weight: 500; }
-  .spinner { width: 16px; height: 16px; border: 2px solid rgba(255,255,255,0.3); border-top-color: white; border-radius: 50%; animation: spin 0.8s linear infinite; display: inline-block; margin-right: 6px; vertical-align: middle; }
+  .error { background: rgba(230,57,70,0.1); border: 1px solid rgba(230,57,70,0.3); color: #ff6b6b; padding: 11px 14px; border-radius: 8px; font-size: 0.84rem; margin-bottom: 14px; display: none; }
+  .success { background: rgba(46,204,113,0.1); border: 1px solid rgba(46,204,113,0.3); color: #2ecc71; padding: 11px 14px; border-radius: 8px; font-size: 0.84rem; margin-bottom: 14px; display: none; }
+  .bottom-link { text-align: center; margin-top: 18px; color: var(--gray); font-size: 0.875rem; }
+  .bottom-link a { color: var(--teal); text-decoration: none; font-weight: 500; }
+  .spinner { width: 15px; height: 15px; border: 2px solid rgba(255,255,255,0.3); border-top-color: white; border-radius: 50%; animation: spin 0.8s linear infinite; display: inline-block; margin-right: 6px; vertical-align: middle; }
   @keyframes spin { to { transform: rotate(360deg); } }
 </style>
 </head>
@@ -53,7 +67,7 @@
   <div class="logo">
     <div class="logo-icon">🏥</div>
     <h1>Create Account</h1>
-    <p>Register as a Doctor or Patient</p>
+    <p>Join the Hospital Management System</p>
   </div>
 
   <div class="error" id="errorMsg"></div>
@@ -69,6 +83,7 @@
       <input type="text" id="lastName" placeholder="Doe">
     </div>
   </div>
+
   <div class="form-group">
     <label>Username</label>
     <input type="text" id="username" placeholder="johndoe">
@@ -81,21 +96,27 @@
     <label>Phone</label>
     <input type="text" id="phone" placeholder="9999999999">
   </div>
+
   <div class="form-group">
-    <label>Role</label>
-    <select id="role">
+    <label>Register As</label>
+    <select id="role" onchange="updateRoleInfo()">
       <option value="doctor">Doctor</option>
       <option value="patient">Patient</option>
     </select>
   </div>
+
+  <div class="role-info" id="roleInfo">
+    Registering as a <span>Doctor</span> — you can manage appointments and write prescriptions.
+  </div>
+
   <div class="form-row">
     <div class="form-group">
       <label>Password</label>
-      <input type="password" id="password" placeholder="Password">
+      <input type="password" id="password" placeholder="Min 8 characters">
     </div>
     <div class="form-group">
       <label>Confirm Password</label>
-      <input type="password" id="password2" placeholder="Confirm">
+      <input type="password" id="password2" placeholder="Repeat password">
     </div>
   </div>
 
@@ -103,7 +124,7 @@
     <span id="btnText">Create Account</span>
   </button>
 
-  <div class="login-link">
+  <div class="bottom-link">
     Already have an account? <a href="login.html">Sign In</a>
   </div>
 </div>
@@ -111,10 +132,32 @@
 <script>
 const API = 'https://hospital-management-system-y46v.onrender.com';
 
+function updateRoleInfo() {
+  const role = document.getElementById('role').value;
+  const info = document.getElementById('roleInfo');
+  if (role === 'doctor') {
+    info.innerHTML = 'Registering as a <span style="color:#00b4d8;font-weight:500;">Doctor</span> — you can manage appointments and write prescriptions.';
+  } else {
+    info.innerHTML = 'Registering as a <span style="color:#a8dadc;font-weight:500;">Patient</span> — you can book appointments and view your medical records.';
+  }
+}
+
 async function register() {
   const btn = document.getElementById('registerBtn');
   const errorMsg = document.getElementById('errorMsg');
   const successMsg = document.getElementById('successMsg');
+
+  errorMsg.style.display = 'none';
+  successMsg.style.display = 'none';
+
+  const role = document.getElementById('role').value;
+
+  // Security: never allow admin registration from frontend
+  if (role === 'admin') {
+    errorMsg.textContent = 'Admin accounts can only be created by the system administrator.';
+    errorMsg.style.display = 'block';
+    return;
+  }
 
   const data = {
     first_name: document.getElementById('firstName').value.trim(),
@@ -122,27 +165,29 @@ async function register() {
     username: document.getElementById('username').value.trim(),
     email: document.getElementById('email').value.trim(),
     phone: document.getElementById('phone').value.trim(),
-    role: document.getElementById('role').value,
+    role,
     password: document.getElementById('password').value,
     password2: document.getElementById('password2').value,
   };
 
-  if (!data.username || !data.password || !data.email) {
+  if (!data.username || !data.password || !data.email || !data.first_name) {
     errorMsg.textContent = 'Please fill in all required fields.';
     errorMsg.style.display = 'block';
     return;
   }
-
   if (data.password !== data.password2) {
     errorMsg.textContent = 'Passwords do not match.';
+    errorMsg.style.display = 'block';
+    return;
+  }
+  if (data.password.length < 8) {
+    errorMsg.textContent = 'Password must be at least 8 characters.';
     errorMsg.style.display = 'block';
     return;
   }
 
   btn.disabled = true;
   document.getElementById('btnText').innerHTML = '<span class="spinner"></span>Creating account...';
-  errorMsg.style.display = 'none';
-  successMsg.style.display = 'none';
 
   try {
     const res = await fetch(`${API}/api/auth/register/`, {
@@ -153,16 +198,16 @@ async function register() {
     const result = await res.json();
 
     if (res.ok) {
-      successMsg.textContent = `Account created successfully! Redirecting to login...`;
+      successMsg.textContent = 'Account created! Redirecting to login...';
       successMsg.style.display = 'block';
       setTimeout(() => window.location.href = 'login.html', 2000);
     } else {
-      const errors = Object.values(result).flat().join(' ');
-      errorMsg.textContent = errors || 'Registration failed.';
+      const errors = Object.entries(result).map(([k, v]) => `${k}: ${Array.isArray(v) ? v.join(', ') : v}`).join(' | ');
+      errorMsg.textContent = errors || 'Registration failed. Please try again.';
       errorMsg.style.display = 'block';
     }
   } catch (err) {
-    errorMsg.textContent = 'Cannot connect to server.';
+    errorMsg.textContent = 'Cannot connect to server. Please try again.';
     errorMsg.style.display = 'block';
   } finally {
     btn.disabled = false;
