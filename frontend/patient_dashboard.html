@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HMS — Patient Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="shared.css">
+<style>
+  .user-avatar { background: rgba(168,218,220,0.2); color: #a8dadc; }
+</style>
+</head>
+<body>
+
+<div class="sidebar">
+  <div class="sidebar-brand">
+    <div class="icon">🏥</div>
+    <h2>Hospital Management</h2>
+    <p>Patient Portal</p>
+  </div>
+  <div class="sidebar-user">
+    <div class="user-avatar" id="sidebarAvatar">PT</div>
+    <div class="user-info">
+      <h4 id="sidebarName">Loading...</h4>
+      <p>Patient</p>
+    </div>
+  </div>
+  <nav class="sidebar-nav">
+    <div class="nav-section-label">Navigation</div>
+    <button class="nav-item active" onclick="showSection('overview')"><span class="icon">📊</span> Overview</button>
+    <button class="nav-item" onclick="showSection('appointments')"><span class="icon">📅</span> Appointments</button>
+    <button class="nav-item" onclick="showSection('prescriptions')"><span class="icon">💊</span> Prescriptions</button>
+    <button class="nav-item" onclick="showSection('billing')"><span class="icon">💳</span> Billing</button>
+    <button class="nav-item" onclick="showSection('profile')"><span class="icon">👤</span> My Profile</button>
+  </nav>
+  <div class="sidebar-footer">
+    <button class="btn-logout" onclick="logout()">🚪 Sign Out</button>
+  </div>
+</div>
+
+<div class="main">
+  <div class="topbar">
+    <h1 id="pageTitle">Overview</h1>
+    <span class="date" id="currentDate"></span>
+  </div>
+  <div class="content">
+
+    <!-- OVERVIEW -->
+    <div id="section-overview">
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-icon">📅</div>
+          <div class="stat-value" id="totalAppts">—</div>
+          <div class="stat-label">Total Appointments</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon">⏳</div>
+          <div class="stat-value" id="pendingAppts">—</div>
+          <div class="stat-label">Pending</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon">💊</div>
+          <div class="stat-value" id="totalPres">—</div>
+          <div class="stat-label">Prescriptions</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon">💳</div>
+          <div class="stat-value" id="totalBills">—</div>
+          <div class="stat-label">Invoices</div>
+        </div>
+      </div>
+
+      <div class="section-card">
+        <div class="section-header">
+          <div><h3>Upcoming Appointments</h3><p>Your scheduled appointments</p></div>
+          <button class="btn btn-primary" onclick="showSection('appointments'); openBookModal()">+ Book</button>
+        </div>
+        <div id="upcomingApptsBody">
+          <div class="loading-state"><div class="spinner"></div><span>Loading...</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- APPOINTMENTS -->
+    <div id="section-appointments" style="display:none">
+      <div class="section-card">
+        <div class="section-header">
+          <div><h3>My Appointments</h3><p>All your appointments</p></div>
+          <button class="btn btn-primary" onclick="openBookModal()">+ Book Appointment</button>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Doctor</th><th>Date</th><th>Time</th><th>Reason</th><th>Status</th></tr></thead>
+            <tbody id="allApptsBody">
+              <tr><td colspan="5"><div class="loading-state"><div class="spinner"></div><span>Loading...</span></div></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- PRESCRIPTIONS -->
+    <div id="section-prescriptions" style="display:none">
+      <div class="section-card">
+        <div class="section-header"><div><h3>My Prescriptions</h3><p>Prescriptions from your doctors</p></div></div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Appointment</th><th>Diagnosis</th><th>Medications</th><th>Follow Up</th><th>Instructions</th></tr></thead>
+            <tbody id="allPresBody">
+              <tr><td colspan="5"><div class="loading-state"><div class="spinner"></div><span>Loading...</span></div></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- BILLING -->
+    <div id="section-billing" style="display:none">
+      <div class="section-card">
+        <div class="section-header"><div><h3>My Bills</h3><p>Your invoices and payment history</p></div></div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Invoice #</th><th>Appointment</th><th>Amount</th><th>Tax</th><th>Total</th><th>Status</th></tr></thead>
+            <tbody id="allBillsBody">
+              <tr><td colspan="6"><div class="loading-state"><div class="spinner"></div><span>Loading...</span></div></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- PROFILE -->
+    <div id="section-profile" style="display:none">
+      <div class="section-card">
+        <div class="section-header"><div><h3>My Profile</h3><p>Update your personal information</p></div></div>
+        <div style="padding: 24px;">
+          <div class="form-group"><label>Date of Birth</label><input type="date" id="editDob"></div>
+          <div class="form-group">
+            <label>Blood Group</label>
+            <select id="editBlood">
+              <option value="">Select</option>
+              <option value="A+">A+</option><option value="A-">A-</option>
+              <option value="B+">B+</option><option value="B-">B-</option>
+              <option value="AB+">AB+</option><option value="AB-">AB-</option>
+              <option value="O+">O+</option><option value="O-">O-</option>
+            </select>
+          </div>
+          <div class="form-group"><label>Address</label><textarea id="editAddress" rows="2"></textarea></div>
+          <div class="form-group"><label>Emergency Contact</label><input type="text" id="editEmergency" placeholder="Phone number"></div>
+          <div class="form-group"><label>Medical History</label><textarea id="editHistory" rows="3" placeholder="Previous conditions, allergies, etc."></textarea></div>
+          <button class="btn btn-primary" onclick="updateProfile()">Save Changes</button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- BOOK APPOINTMENT MODAL -->
+<div class="modal-overlay" id="bookModal">
+  <div class="modal">
+    <h3>📅 Book Appointment</h3>
+    <div class="form-group">
+      <label>Select Doctor</label>
+      <select id="bookDoctorId"><option value="">Loading doctors...</option></select>
+    </div>
+    <div class="form-group"><label>Date</label><input type="date" id="bookDate"></div>
+    <div class="form-group"><label>Time</label><input type="time" id="bookTime"></div>
+    <div class="form-group"><label>Reason</label><textarea id="bookReason" rows="2" placeholder="Reason for visit"></textarea></div>
+    <div class="modal-actions">
+      <button class="btn btn-outline" onclick="closeBookModal()">Cancel</button>
+      <button class="btn btn-primary" onclick="bookAppointment()">Book</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const API = 'https://hospital-management-system-y46v.onrender.com';
+let token = localStorage.getItem('access_token');
+let user = JSON.parse(localStorage.getItem('user') || '{}');
+let patientProfile = null;
+
+if (!token || user.role !== 'patient') window.location.href = 'login.html';
+
+document.getElementById('currentDate').textContent = new Date().toLocaleDateString('en-IN', { weekday:'long', year:'numeric', month:'long', day:'numeric' });
+document.getElementById('sidebarName').textContent = `${user.first_name} ${user.last_name}`;
+document.getElementById('sidebarAvatar').textContent = `${user.first_name?.[0]}${user.last_name?.[0]}`;
+
+async function api(url, options = {}) {
+  const res = await fetch(`${API}${url}`, {
+    ...options,
+    headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json', ...(options.headers || {}) }
+  });
+  if (res.status === 401) { logout(); return null; }
+  return res.json();
+}
+
+async function loadAll() {
+  const [profile, appointments, prescriptions, billing, doctors] = await Promise.all([
+    api('/api/patients/me/'),
+    api('/api/appointments/'),
+    api('/api/prescriptions/'),
+    api('/api/billing/'),
+    api('/api/doctors/')
+  ]);
+
+  if (profile) { patientProfile = profile; renderProfile(profile); }
+  if (appointments) renderAppointments(appointments);
+  if (prescriptions) renderPrescriptions(prescriptions);
+  if (billing) renderBilling(billing);
+  if (doctors) renderDoctorSelect(doctors);
+}
+
+function renderProfile(p) {
+  document.getElementById('editDob').value = p.date_of_birth || '';
+  document.getElementById('editBlood').value = p.blood_group || '';
+  document.getElementById('editAddress').value = p.address || '';
+  document.getElementById('editEmergency').value = p.emergency_contact || '';
+  document.getElementById('editHistory').value = p.medical_history || '';
+}
+
+function renderAppointments(data) {
+  const list = data.results || data;
+  document.getElementById('totalAppts').textContent = list.length;
+  document.getElementById('pendingAppts').textContent = list.filter(a => a.status === 'pending').length;
+
+  const upcoming = list.filter(a => ['pending','confirmed'].includes(a.status)).slice(0,5);
+  document.getElementById('upcomingApptsBody').innerHTML = upcoming.length ? `
+    <div class="table-wrap"><table>
+      <thead><tr><th>Doctor</th><th>Date</th><th>Time</th><th>Status</th></tr></thead>
+      <tbody>${upcoming.map(a => `
+        <tr>
+          <td>${a.doctor_name || 'Doctor #' + a.doctor}</td>
+          <td>${a.appointment_date}</td>
+          <td>${a.appointment_time}</td>
+          <td><span class="badge badge-${a.status}">${a.status}</span></td>
+        </tr>`).join('')}
+      </tbody>
+    </table></div>` : `<div class="empty-state"><div class="empty-icon">📅</div><h3>No upcoming appointments</h3><p>Book an appointment to get started</p></div>`;
+
+  document.getElementById('allApptsBody').innerHTML = list.length ? list.map(a => `
+    <tr>
+      <td>${a.doctor_name || 'Doctor #' + a.doctor}</td>
+      <td>${a.appointment_date}</td>
+      <td>${a.appointment_time}</td>
+      <td>${a.reason || '—'}</td>
+      <td><span class="badge badge-${a.status}">${a.status}</span></td>
+    </tr>`).join('') : `<tr><td colspan="5"><div class="empty-state"><div class="empty-icon">📅</div><h3>No appointments yet</h3></div></td></tr>`;
+}
+
+function renderPrescriptions(data) {
+  const list = data.results || data;
+  document.getElementById('totalPres').textContent = list.length;
+  document.getElementById('allPresBody').innerHTML = list.length ? list.map(p => `
+    <tr>
+      <td>#${p.appointment}</td>
+      <td>${p.diagnosis || '—'}</td>
+      <td>${Array.isArray(p.medications) ? p.medications.map(m => `${m.name} (${m.dosage})`).join(', ') : '—'}</td>
+      <td>${p.follow_up_date || '—'}</td>
+      <td>${p.instructions || '—'}</td>
+    </tr>`).join('') : `<tr><td colspan="5"><div class="empty-state"><div class="empty-icon">💊</div><h3>No prescriptions yet</h3></div></td></tr>`;
+}
+
+function renderBilling(data) {
+  const list = data.results || data;
+  document.getElementById('totalBills').textContent = list.length;
+  document.getElementById('allBillsBody').innerHTML = list.length ? list.map(b => `
+    <tr>
+      <td>#${b.id}</td>
+      <td>#${b.appointment}</td>
+      <td>₹${b.amount}</td>
+      <td>₹${b.tax}</td>
+      <td>₹${b.total_amount}</td>
+      <td><span class="badge badge-${b.payment_status === 'paid' ? 'paid' : 'unpaid'}">${b.payment_status}</span></td>
+    </tr>`).join('') : `<tr><td colspan="6"><div class="empty-state"><div class="empty-icon">💳</div><h3>No invoices yet</h3></div></td></tr>`;
+}
+
+function renderDoctorSelect(data) {
+  const list = data.results || data;
+  document.getElementById('bookDoctorId').innerHTML = `<option value="">Select a doctor</option>` +
+    list.map(d => `<option value="${d.id}">Dr. ${d.user?.first_name} ${d.user?.last_name} — ${d.specialization} (₹${d.consultation_fee})</option>`).join('');
+}
+
+function openBookModal() { document.getElementById('bookModal').classList.add('show'); }
+function closeBookModal() { document.getElementById('bookModal').classList.remove('show'); }
+
+async function bookAppointment() {
+  if (!patientProfile) { showToast('Profile not loaded', 'error'); return; }
+  const data = await api('/api/appointments/', {
+    method: 'POST',
+    body: JSON.stringify({
+      doctor: parseInt(document.getElementById('bookDoctorId').value),
+      patient: patientProfile.id,
+      appointment_date: document.getElementById('bookDate').value,
+      appointment_time: document.getElementById('bookTime').value + ':00',
+      reason: document.getElementById('bookReason').value
+    })
+  });
+  if (data && data.id) { showToast('Appointment booked!', 'success'); closeBookModal(); loadAll(); }
+  else showToast('Failed to book. Check if slot is available.', 'error');
+}
+
+async function updateProfile() {
+  const data = await api('/api/patients/me/', {
+    method: 'PUT',
+    body: JSON.stringify({
+      date_of_birth: document.getElementById('editDob').value || null,
+      blood_group: document.getElementById('editBlood').value,
+      address: document.getElementById('editAddress').value,
+      emergency_contact: document.getElementById('editEmergency').value,
+      medical_history: document.getElementById('editHistory').value
+    })
+  });
+  if (data) showToast('Profile updated!', 'success');
+  else showToast('Failed to update', 'error');
+}
+
+function showSection(name) {
+  ['overview','appointments','prescriptions','billing','profile'].forEach(s => {
+    document.getElementById(`section-${s}`).style.display = s === name ? 'block' : 'none';
+  });
+  document.querySelectorAll('.nav-item').forEach((el, i) => {
+    el.classList.toggle('active', ['overview','appointments','prescriptions','billing','profile'][i] === name);
+  });
+  document.getElementById('pageTitle').textContent = name.charAt(0).toUpperCase() + name.slice(1);
+}
+
+function showToast(msg, type) {
+  const t = document.createElement('div');
+  t.className = `toast toast-${type}`;
+  t.textContent = msg;
+  document.body.appendChild(t);
+  setTimeout(() => t.remove(), 3000);
+}
+
+function logout() { localStorage.clear(); window.location.href = 'login.html'; }
+
+loadAll();
+</script>
+</body>
+</html>

@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HMS — Admin Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="shared.css">
+<style>
+  .user-avatar { background: rgba(233,196,106,0.2); color: var(--gold); }
+</style>
+</head>
+<body>
+
+<div class="sidebar">
+  <div class="sidebar-brand">
+    <div class="icon">🏥</div>
+    <h2>Hospital Management</h2>
+    <p>Admin Portal</p>
+  </div>
+  <div class="sidebar-user">
+    <div class="user-avatar" id="sidebarAvatar">AD</div>
+    <div class="user-info">
+      <h4 id="sidebarName">Admin</h4>
+      <p>Administrator</p>
+    </div>
+  </div>
+  <nav class="sidebar-nav">
+    <div class="nav-section-label">Navigation</div>
+    <button class="nav-item active" onclick="showSection('overview')"><span class="icon">📊</span> Overview</button>
+    <button class="nav-item" onclick="showSection('doctors')"><span class="icon">👨‍⚕️</span> Doctors</button>
+    <button class="nav-item" onclick="showSection('patients')"><span class="icon">🧑‍🤝‍🧑</span> Patients</button>
+    <button class="nav-item" onclick="showSection('appointments')"><span class="icon">📅</span> Appointments</button>
+    <button class="nav-item" onclick="showSection('billing')"><span class="icon">💳</span> Billing</button>
+  </nav>
+  <div class="sidebar-footer">
+    <button class="btn-logout" onclick="logout()">🚪 Sign Out</button>
+  </div>
+</div>
+
+<div class="main">
+  <div class="topbar">
+    <h1 id="pageTitle">Overview</h1>
+    <span class="date" id="currentDate"></span>
+  </div>
+  <div class="content">
+
+    <!-- OVERVIEW -->
+    <div id="section-overview">
+      <div class="stats-grid" id="statsGrid">
+        <div class="stat-card"><div class="stat-icon">👨‍⚕️</div><div class="stat-value" id="statDoctors">—</div><div class="stat-label">Total Doctors</div></div>
+        <div class="stat-card"><div class="stat-icon">🧑‍🤝‍🧑</div><div class="stat-value" id="statPatients">—</div><div class="stat-label">Total Patients</div></div>
+        <div class="stat-card"><div class="stat-icon">📅</div><div class="stat-value" id="statAppts">—</div><div class="stat-label">Total Appointments</div></div>
+        <div class="stat-card"><div class="stat-icon">⏳</div><div class="stat-value" id="statPending">—</div><div class="stat-label">Pending</div></div>
+        <div class="stat-card"><div class="stat-icon">✅</div><div class="stat-value" id="statCompleted">—</div><div class="stat-label">Completed</div></div>
+        <div class="stat-card"><div class="stat-icon">💰</div><div class="stat-value" id="statRevenue">—</div><div class="stat-label">Total Revenue</div><div class="stat-sub">From paid invoices</div></div>
+      </div>
+
+      <div class="section-card">
+        <div class="section-header"><div><h3>Recent Appointments</h3></div></div>
+        <div id="recentApptsBody"><div class="loading-state"><div class="spinner"></div><span>Loading...</span></div></div>
+      </div>
+    </div>
+
+    <!-- DOCTORS -->
+    <div id="section-doctors" style="display:none">
+      <div class="section-card">
+        <div class="section-header"><div><h3>All Doctors</h3></div></div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Name</th><th>Specialization</th><th>License</th><th>Experience</th><th>Fee</th><th>Available</th></tr></thead>
+            <tbody id="doctorsBody"><tr><td colspan="6"><div class="loading-state"><div class="spinner"></div><span>Loading...</span></div></td></tr></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- PATIENTS -->
+    <div id="section-patients" style="display:none">
+      <div class="section-card">
+        <div class="section-header"><div><h3>All Patients</h3></div></div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Name</th><th>Email</th><th>Blood Group</th><th>DOB</th><th>Emergency</th></tr></thead>
+            <tbody id="patientsBody"><tr><td colspan="5"><div class="loading-state"><div class="spinner"></div><span>Loading...</span></div></td></tr></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- APPOINTMENTS -->
+    <div id="section-appointments" style="display:none">
+      <div class="section-card">
+        <div class="section-header"><div><h3>All Appointments</h3></div></div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Patient</th><th>Doctor</th><th>Date</th><th>Time</th><th>Status</th><th>Action</th></tr></thead>
+            <tbody id="apptsBody"><tr><td colspan="6"><div class="loading-state"><div class="spinner"></div><span>Loading...</span></div></td></tr></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- BILLING -->
+    <div id="section-billing" style="display:none">
+      <div class="section-card">
+        <div class="section-header">
+          <div><h3>Invoices</h3></div>
+          <button class="btn btn-primary" onclick="openInvoiceModal()">+ Create Invoice</button>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Invoice #</th><th>Appointment</th><th>Amount</th><th>Total</th><th>Status</th><th>Action</th></tr></thead>
+            <tbody id="billingBody"><tr><td colspan="6"><div class="loading-state"><div class="spinner"></div><span>Loading...</span></div></td></tr></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- INVOICE MODAL -->
+<div class="modal-overlay" id="invoiceModal">
+  <div class="modal">
+    <h3>💳 Create Invoice</h3>
+    <div class="form-group"><label>Appointment ID</label><input type="number" id="invApptId" placeholder="Appointment ID"></div>
+    <div class="form-group"><label>Amount (₹)</label><input type="number" id="invAmount" placeholder="Base amount"></div>
+    <div class="form-group"><label>Tax (₹)</label><input type="number" id="invTax" placeholder="Tax amount" value="0"></div>
+    <div class="form-group"><label>Discount (₹)</label><input type="number" id="invDiscount" placeholder="Discount" value="0"></div>
+    <div class="modal-actions">
+      <button class="btn btn-outline" onclick="closeInvoiceModal()">Cancel</button>
+      <button class="btn btn-primary" onclick="createInvoice()">Create</button>
+    </div>
+  </div>
+</div>
+
+<!-- MARK PAID MODAL -->
+<div class="modal-overlay" id="paidModal">
+  <div class="modal">
+    <h3>Mark Invoice as Paid</h3>
+    <input type="hidden" id="paidInvoiceId">
+    <div class="form-group">
+      <label>Payment Method</label>
+      <select id="paymentMethod">
+        <option value="cash">Cash</option>
+        <option value="card">Card</option>
+        <option value="online">Online</option>
+        <option value="insurance">Insurance</option>
+      </select>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-outline" onclick="closePaidModal()">Cancel</button>
+      <button class="btn btn-primary" onclick="markPaid()">Confirm Payment</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const API = 'https://hospital-management-system-y46v.onrender.com';
+let token = localStorage.getItem('access_token');
+let user = JSON.parse(localStorage.getItem('user') || '{}');
+
+if (!token || user.role !== 'admin') window.location.href = 'login.html';
+
+document.getElementById('currentDate').textContent = new Date().toLocaleDateString('en-IN', { weekday:'long', year:'numeric', month:'long', day:'numeric' });
+document.getElementById('sidebarName').textContent = `${user.first_name || 'Admin'} ${user.last_name || ''}`;
+document.getElementById('sidebarAvatar').textContent = `${user.first_name?.[0] || 'A'}${user.last_name?.[0] || 'D'}`;
+
+async function api(url, options = {}) {
+  const res = await fetch(`${API}${url}`, {
+    ...options,
+    headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json', ...(options.headers || {}) }
+  });
+  if (res.status === 401) { logout(); return null; }
+  return res.json();
+}
+
+async function loadAll() {
+  const [dashboard, appointments, doctors, patients, billing] = await Promise.all([
+    api('/api/dashboard/'),
+    api('/api/appointments/'),
+    api('/api/doctors/'),
+    api('/api/patients/'),
+    api('/api/billing/')
+  ]);
+
+  if (dashboard) renderDashboard(dashboard);
+  if (appointments) renderAppointments(appointments);
+  if (doctors) renderDoctors(doctors);
+  if (patients) renderPatients(patients);
+  if (billing) renderBilling(billing);
+}
+
+function renderDashboard(d) {
+  document.getElementById('statDoctors').textContent = d.total_doctors || 0;
+  document.getElementById('statPatients').textContent = d.total_patients || 0;
+  document.getElementById('statAppts').textContent = d.total_appointments || 0;
+  document.getElementById('statPending').textContent = d.pending_appointments || 0;
+  document.getElementById('statCompleted').textContent = d.completed_appointments || 0;
+  document.getElementById('statRevenue').textContent = `₹${d.total_revenue || 0}`;
+}
+
+function renderAppointments(data) {
+  const list = data.results || data;
+  document.getElementById('recentApptsBody').innerHTML = list.slice(0,8).length ? `
+    <div class="table-wrap"><table>
+      <thead><tr><th>Patient</th><th>Doctor</th><th>Date</th><th>Status</th></tr></thead>
+      <tbody>${list.slice(0,8).map(a => `
+        <tr>
+          <td>${a.patient_name || '#' + a.patient}</td>
+          <td>${a.doctor_name || '#' + a.doctor}</td>
+          <td>${a.appointment_date}</td>
+          <td><span class="badge badge-${a.status}">${a.status}</span></td>
+        </tr>`).join('')}
+      </tbody>
+    </table></div>` : `<div class="empty-state"><div class="empty-icon">📅</div><h3>No appointments yet</h3></div>`;
+
+  document.getElementById('apptsBody').innerHTML = list.length ? list.map(a => `
+    <tr>
+      <td>${a.patient_name || '#' + a.patient}</td>
+      <td>${a.doctor_name || '#' + a.doctor}</td>
+      <td>${a.appointment_date}</td>
+      <td>${a.appointment_time}</td>
+      <td><span class="badge badge-${a.status}">${a.status}</span></td>
+      <td><button class="btn btn-sm btn-outline" onclick="updateApptStatus(${a.id})">Update</button></td>
+    </tr>`).join('') : `<tr><td colspan="6"><div class="empty-state"><div class="empty-icon">📅</div><h3>No appointments</h3></div></td></tr>`;
+}
+
+function renderDoctors(data) {
+  const list = data.results || data;
+  document.getElementById('doctorsBody').innerHTML = list.length ? list.map(d => `
+    <tr>
+      <td>Dr. ${d.user?.first_name} ${d.user?.last_name}</td>
+      <td>${d.specialization}</td>
+      <td>${d.license_number || '—'}</td>
+      <td>${d.experience_years || 0} yrs</td>
+      <td>₹${d.consultation_fee || 0}</td>
+      <td><span class="badge ${d.is_available ? 'badge-confirmed' : 'badge-cancelled'}">${d.is_available ? 'Yes' : 'No'}</span></td>
+    </tr>`).join('') : `<tr><td colspan="6"><div class="empty-state"><div class="empty-icon">👨‍⚕️</div><h3>No doctors</h3></div></td></tr>`;
+}
+
+function renderPatients(data) {
+  const list = data.results || data;
+  document.getElementById('patientsBody').innerHTML = list.length ? list.map(p => `
+    <tr>
+      <td>${p.user?.first_name} ${p.user?.last_name}</td>
+      <td>${p.user?.email || '—'}</td>
+      <td>${p.blood_group || '—'}</td>
+      <td>${p.date_of_birth || '—'}</td>
+      <td>${p.emergency_contact || '—'}</td>
+    </tr>`).join('') : `<tr><td colspan="5"><div class="empty-state"><div class="empty-icon">🧑‍🤝‍🧑</div><h3>No patients</h3></div></td></tr>`;
+}
+
+function renderBilling(data) {
+  const list = data.results || data;
+  document.getElementById('billingBody').innerHTML = list.length ? list.map(b => `
+    <tr>
+      <td>#${b.id}</td>
+      <td>#${b.appointment}</td>
+      <td>₹${b.amount}</td>
+      <td>₹${b.total_amount}</td>
+      <td><span class="badge badge-${b.payment_status === 'paid' ? 'paid' : 'unpaid'}">${b.payment_status}</span></td>
+      <td>${b.payment_status !== 'paid' ? `<button class="btn btn-sm btn-primary" onclick="openPaidModal(${b.id})">Mark Paid</button>` : '—'}</td>
+    </tr>`).join('') : `<tr><td colspan="6"><div class="empty-state"><div class="empty-icon">💳</div><h3>No invoices</h3></div></td></tr>`;
+}
+
+function openInvoiceModal() { document.getElementById('invoiceModal').classList.add('show'); }
+function closeInvoiceModal() { document.getElementById('invoiceModal').classList.remove('show'); }
+
+async function createInvoice() {
+  const data = await api('/api/billing/', {
+    method: 'POST',
+    body: JSON.stringify({
+      appointment: parseInt(document.getElementById('invApptId').value),
+      amount: document.getElementById('invAmount').value,
+      tax: document.getElementById('invTax').value || '0',
+      discount: document.getElementById('invDiscount').value || '0'
+    })
+  });
+  if (data && data.id) { showToast('Invoice created!', 'success'); closeInvoiceModal(); loadAll(); }
+  else showToast('Failed to create invoice', 'error');
+}
+
+function openPaidModal(id) { document.getElementById('paidInvoiceId').value = id; document.getElementById('paidModal').classList.add('show'); }
+function closePaidModal() { document.getElementById('paidModal').classList.remove('show'); }
+
+async function markPaid() {
+  const id = document.getElementById('paidInvoiceId').value;
+  const method = document.getElementById('paymentMethod').value;
+  const data = await api(`/api/billing/${id}/mark_paid/`, { method: 'PATCH', body: JSON.stringify({ payment_method: method }) });
+  if (data) { showToast('Payment recorded!', 'success'); closePaidModal(); loadAll(); }
+  else showToast('Failed to update', 'error');
+}
+
+async function updateApptStatus(id) {
+  const status = prompt('Enter new status: pending / confirmed / completed / cancelled');
+  if (!status) return;
+  const data = await api(`/api/appointments/${id}/update_status/`, { method: 'PATCH', body: JSON.stringify({ status }) });
+  if (data) { showToast('Status updated!', 'success'); loadAll(); }
+  else showToast('Failed to update', 'error');
+}
+
+function showSection(name) {
+  ['overview','doctors','patients','appointments','billing'].forEach(s => {
+    document.getElementById(`section-${s}`).style.display = s === name ? 'block' : 'none';
+  });
+  document.querySelectorAll('.nav-item').forEach((el, i) => {
+    el.classList.toggle('active', ['overview','doctors','patients','appointments','billing'][i] === name);
+  });
+  document.getElementById('pageTitle').textContent = name.charAt(0).toUpperCase() + name.slice(1);
+}
+
+function showToast(msg, type) {
+  const t = document.createElement('div');
+  t.className = `toast toast-${type}`;
+  t.textContent = msg;
+  document.body.appendChild(t);
+  setTimeout(() => t.remove(), 3000);
+}
+
+function logout() { localStorage.clear(); window.location.href = 'login.html'; }
+
+loadAll();
+</script>
+</body>
+</html>
