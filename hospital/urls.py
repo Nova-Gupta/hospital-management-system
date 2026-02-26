@@ -17,5 +17,5 @@ urlpatterns = [
     path('api/billing/', include('hospital.apps.billing.urls')),
     path('api/dashboard/', include('hospital.apps.dashboard.urls')),
     # Frontend — redirect root to login
-    path('', RedirectView.as_view(url='/frontend/login.html')),
+    path('', RedirectView.as_view(url='/static/login.html')),
 ]
