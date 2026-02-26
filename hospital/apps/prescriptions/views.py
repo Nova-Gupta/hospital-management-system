@@ -10,14 +10,17 @@ class PrescriptionViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         user = self.request.user
-        if user.is_admin():
-            return Prescription.objects.select_related('appointment').all()
-        elif user.is_doctor():
-            return Prescription.objects.select_related('appointment').filter(
-                appointment__doctor=user.doctor_profile)
-        else:
-            return Prescription.objects.select_related('appointment').filter(
-                appointment__patient=user.patient_profile)
+        try:
+            if user.is_admin():
+                return Prescription.objects.select_related('appointment').all()
+            elif user.is_doctor():
+                return Prescription.objects.select_related('appointment').filter(
+                    appointment__doctor=user.doctor_profile)
+            else:
+                return Prescription.objects.select_related('appointment').filter(
+                    appointment__patient=user.patient_profile)
+        except Exception:
+            return Prescription.objects.none()
 
     def get_permissions(self):
         if self.action in ['create', 'update', 'partial_update', 'destroy']:
