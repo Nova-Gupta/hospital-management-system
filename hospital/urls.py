@@ -1,6 +1,7 @@
 from django.contrib import admin
 from django.urls import path, include
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
+from django.views.generic import RedirectView
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -15,4 +16,6 @@ urlpatterns = [
     path('api/prescriptions/', include('hospital.apps.prescriptions.urls')),
     path('api/billing/', include('hospital.apps.billing.urls')),
     path('api/dashboard/', include('hospital.apps.dashboard.urls')),
+    # Frontend — redirect root to login
+    path('', RedirectView.as_view(url='/frontend/login.html')),
 ]
