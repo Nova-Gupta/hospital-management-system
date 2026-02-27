@@ -7,138 +7,141 @@
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
-:root{--navy:#0a1628;--navy2:#112240;--teal:#00b4d8;--teal2:#0096c7;--white:#f0f4f8;--gray:#8892a4;--error:#e63946}
-body{min-height:100vh;background:var(--navy);font-family:'DM Sans',sans-serif;display:flex;align-items:center;justify-content:center;padding:20px}
-.container{width:100%;max-width:440px}
-.logo{text-align:center;margin-bottom:32px}
-.logo-icon{width:60px;height:60px;background:linear-gradient(135deg,var(--teal),var(--teal2));border-radius:18px;display:flex;align-items:center;justify-content:center;font-size:28px;margin:0 auto 16px}
-.logo h1{font-family:'Playfair Display',serif;font-size:1.8rem;color:var(--white);line-height:1.2}
-.logo h1 span{color:var(--teal)}
-.logo p{color:var(--gray);font-size:.88rem;margin-top:6px}
-.card{background:var(--navy2);border:1px solid rgba(255,255,255,.08);border-radius:20px;padding:32px 28px}
-.card h2{font-family:'Playfair Display',serif;font-size:1.4rem;color:var(--white);margin-bottom:6px}
+:root{--navy:#0a1628;--navy2:#112240;--teal:#00b4d8;--teal2:#0096c7;--white:#f0f4f8;--gray:#8892a4}
+body{min-height:100vh;background:var(--navy);font-family:'DM Sans',sans-serif;display:flex;align-items:center;justify-content:center;padding:24px}
+
+/* ── DESKTOP: two-column wrapper ── */
+.page{width:100%;max-width:960px;display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:center}
+
+/* ── LEFT PANEL ── */
+.left .logo-icon{width:52px;height:52px;background:linear-gradient(135deg,var(--teal),var(--teal2));border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:24px;margin-bottom:20px}
+.left h1{font-family:'Playfair Display',serif;font-size:2.2rem;color:var(--white);line-height:1.2;margin-bottom:10px}
+.left h1 span{color:var(--teal)}
+.left .tagline{color:var(--gray);font-size:.9rem;margin-bottom:32px}
+.feat{display:flex;align-items:center;gap:14px;padding:14px 16px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);border-radius:12px;margin-bottom:12px}
+.feat-icon{width:38px;height:38px;background:rgba(0,180,216,.1);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:17px;flex-shrink:0}
+.feat h3{font-size:.85rem;font-weight:500;color:var(--white)}
+.feat p{font-size:.76rem;color:var(--gray);margin-top:2px}
+
+/* ── RIGHT PANEL (card) ── */
+.card{background:var(--navy2);border:1px solid rgba(255,255,255,.08);border-radius:20px;padding:36px 32px}
+.card h2{font-family:'Playfair Display',serif;font-size:1.5rem;color:var(--white);margin-bottom:6px}
 .card .sub{color:var(--gray);font-size:.85rem;margin-bottom:28px}
 .fg{margin-bottom:18px}
-.fg label{display:block;color:var(--gray);font-size:.75rem;font-weight:600;text-transform:uppercase;letter-spacing:.5px;margin-bottom:7px}
+.fg label{display:block;color:var(--gray);font-size:.74rem;font-weight:600;text-transform:uppercase;letter-spacing:.5px;margin-bottom:7px}
 .fg input{width:100%;padding:13px 15px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:10px;color:var(--white);font-size:.95rem;font-family:'DM Sans',sans-serif;outline:none;transition:all .2s}
-.fg input::placeholder{color:rgba(136,146,164,.5)}
-.fg input:focus{border-color:var(--teal);background:rgba(0,180,216,.05);box-shadow:0 0 0 3px rgba(0,180,216,.1)}
+.fg input::placeholder{color:rgba(136,146,164,.45)}
+.fg input:focus{border-color:var(--teal);background:rgba(0,180,216,.04);box-shadow:0 0 0 3px rgba(0,180,216,.1)}
 .btn{width:100%;padding:14px;background:linear-gradient(135deg,var(--teal),var(--teal2));border:none;border-radius:10px;color:#fff;font-size:1rem;font-weight:600;font-family:'DM Sans',sans-serif;cursor:pointer;transition:all .3s;margin-top:4px}
-.btn:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,180,216,.35)}
+.btn:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,180,216,.3)}
 .btn:disabled{opacity:.6;cursor:not-allowed;transform:none}
 .err{background:rgba(230,57,70,.1);border:1px solid rgba(230,57,70,.3);color:#ff6b6b;padding:11px 14px;border-radius:8px;font-size:.84rem;margin-bottom:18px;display:none}
 .roles{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:20px}
-.role-badge{padding:5px 14px;border-radius:20px;font-size:.72rem;font-weight:500;border:1px solid}
-.role-badge.a{border-color:#e9c46a;color:#e9c46a;background:rgba(233,196,106,.08)}
-.role-badge.d{border-color:var(--teal);color:var(--teal);background:rgba(0,180,216,.08)}
-.role-badge.p{border-color:#a8dadc;color:#a8dadc;background:rgba(168,218,220,.08)}
-.bottom-link{text-align:center;margin-top:20px;color:var(--gray);font-size:.875rem}
-.bottom-link a{color:var(--teal);text-decoration:none;font-weight:500}
+.rb{padding:4px 14px;border-radius:20px;font-size:.72rem;font-weight:500;border:1px solid}
+.rb.a{border-color:#e9c46a;color:#e9c46a;background:rgba(233,196,106,.08)}
+.rb.d{border-color:var(--teal);color:var(--teal);background:rgba(0,180,216,.08)}
+.rb.p{border-color:#a8dadc;color:#a8dadc;background:rgba(168,218,220,.08)}
+.link{text-align:center;margin-top:20px;color:var(--gray);font-size:.875rem}
+.link a{color:var(--teal);text-decoration:none;font-weight:500}
 .spin{width:16px;height:16px;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:spin .8s linear infinite;display:inline-block;margin-right:6px;vertical-align:middle}
 @keyframes spin{to{transform:rotate(360deg)}}
 
-/* Tablet+ show decorative features panel */
-@media(min-width:768px){
-  body{padding:32px}
-  .container{max-width:900px;display:grid;grid-template-columns:1fr 1fr;gap:32px;align-items:center}
-  .logo{display:none}
-  .features{display:flex;flex-direction:column;gap:20px}
-  .brand{margin-bottom:32px}
-  .brand .logo-icon{margin:0 0 16px;width:52px;height:52px;font-size:24px}
-  .brand h1{font-family:'Playfair Display',serif;font-size:2rem;color:var(--white);line-height:1.2}
-  .brand h1 span{color:var(--teal)}
-  .brand p{color:var(--gray);font-size:.9rem;margin-top:8px}
-  .feat{display:flex;align-items:center;gap:14px;padding:14px 18px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);border-radius:12px}
-  .feat-icon{width:38px;height:38px;background:rgba(0,180,216,.1);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:17px;flex-shrink:0}
-  .feat h3{font-size:.85rem;font-weight:500;color:var(--white)}
-  .feat p{font-size:.76rem;color:var(--gray);margin-top:2px}
-}
-@media(max-width:767px){
-  .features,.brand{display:none}
+/* ── MOBILE: single column ── */
+@media(max-width:768px){
+  body{padding:20px;align-items:flex-start;padding-top:32px}
+  .page{grid-template-columns:1fr;gap:0;max-width:440px}
+  .left{display:none}
+  /* show a compact logo above the card on mobile */
+  .page::before{
+    content:'';display:block;
+  }
+  .mobile-header{display:flex;flex-direction:column;align-items:center;text-align:center;margin-bottom:24px}
+  .mobile-header .logo-icon{width:56px;height:56px;background:linear-gradient(135deg,var(--teal),var(--teal2));border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:26px;margin-bottom:14px}
+  .mobile-header h1{font-family:'Playfair Display',serif;font-size:1.7rem;color:var(--white);line-height:1.2}
+  .mobile-header h1 span{color:var(--teal)}
+  .mobile-header p{color:var(--gray);font-size:.85rem;margin-top:6px}
   .card{padding:24px 20px}
+}
+@media(min-width:769px){
+  .mobile-header{display:none}
 }
 </style>
 </head>
 <body>
 
-<!-- Left panel (tablet+) -->
-<div class="features">
-  <div class="brand">
+<div class="page">
+
+  <!-- LEFT: shown on desktop only -->
+  <div class="left">
     <div class="logo-icon">🏥</div>
     <h1>Hospital<br><span>Management</span><br>System</h1>
-    <p>Streamlined healthcare operations platform</p>
-  </div>
-  <div class="feat"><div class="feat-icon">📅</div><div><h3>Appointment Management</h3><p>Schedule and track patient appointments</p></div></div>
-  <div class="feat"><div class="feat-icon">💊</div><div><h3>Prescription Records</h3><p>Digital prescriptions with medication details</p></div></div>
-  <div class="feat"><div class="feat-icon">💳</div><div><h3>Billing & Invoices</h3><p>Complete payment tracking and invoicing</p></div></div>
-</div>
-
-<div class="container" id="rightPanel">
-  <!-- Mobile logo -->
-  <div class="logo">
-    <div class="logo-icon">🏥</div>
-    <h1>Hospital <span>Management</span> System</h1>
-    <p>Streamlined healthcare operations</p>
+    <p class="tagline">Streamlined healthcare operations platform</p>
+    <div class="feat"><div class="feat-icon">📅</div><div><h3>Appointment Management</h3><p>Schedule and track patient appointments</p></div></div>
+    <div class="feat"><div class="feat-icon">💊</div><div><h3>Prescription Records</h3><p>Digital prescriptions with medication details</p></div></div>
+    <div class="feat"><div class="feat-icon">💳</div><div><h3>Billing &amp; Invoices</h3><p>Complete payment tracking and invoicing</p></div></div>
   </div>
 
-  <div class="card">
-    <h2>Welcome back</h2>
-    <p class="sub">Sign in to your account to continue</p>
-
-    <div class="err" id="errMsg"></div>
-
-    <div class="fg"><label>Username</label><input type="text" id="username" placeholder="Enter your username" autocomplete="username"></div>
-    <div class="fg"><label>Password</label><input type="password" id="password" placeholder="Enter your password" autocomplete="current-password"></div>
-
-    <button class="btn" id="loginBtn" onclick="login()">
-      <span id="btnContent">Sign In</span>
-    </button>
-
-    <div class="roles">
-      <span class="role-badge a">Admin</span>
-      <span class="role-badge d">Doctor</span>
-      <span class="role-badge p">Patient</span>
+  <!-- RIGHT: always shown -->
+  <div class="right">
+    <!-- Mobile header (hidden on desktop) -->
+    <div class="mobile-header">
+      <div class="logo-icon">🏥</div>
+      <h1>Hospital <span>Management</span> System</h1>
+      <p>Streamlined healthcare operations</p>
     </div>
 
-    <div class="bottom-link">Don't have an account? <a href="register.html">Register</a></div>
+    <div class="card">
+      <h2>Welcome back</h2>
+      <p class="sub">Sign in to your account to continue</p>
+      <div class="err" id="errMsg"></div>
+      <div class="fg"><label>Username</label><input type="text" id="username" placeholder="Enter your username" autocomplete="username"></div>
+      <div class="fg"><label>Password</label><input type="password" id="password" placeholder="Enter your password" autocomplete="current-password"></div>
+      <button class="btn" id="loginBtn" onclick="login()"><span id="btnTxt">Sign In</span></button>
+      <div class="roles">
+        <span class="rb a">Admin</span>
+        <span class="rb d">Doctor</span>
+        <span class="rb p">Patient</span>
+      </div>
+      <div class="link">Don't have an account? <a href="register.html">Register</a></div>
+    </div>
   </div>
+
 </div>
 
 <script>
 const API='https://hospital-management-system-y46v.onrender.com';
 document.addEventListener('keypress',e=>{if(e.key==='Enter')login()});
-
 async function login(){
-  const username=document.getElementById('username').value.trim();
-  const password=document.getElementById('password').value;
+  const un=document.getElementById('username').value.trim();
+  const pw=document.getElementById('password').value;
   const btn=document.getElementById('loginBtn');
   const err=document.getElementById('errMsg');
   err.style.display='none';
-  if(!username||!password){showErr('Please enter your username and password.');return}
+  if(!un||!pw){showErr('Please enter your username and password.');return}
   btn.disabled=true;
-  document.getElementById('btnContent').innerHTML='<span class="spin"></span>Signing in...';
+  document.getElementById('btnTxt').innerHTML='<span class="spin"></span>Signing in...';
   try{
-    const r=await fetch(`${API}/api/auth/login/`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({username,password})});
-    const data=await r.json();
+    const r=await fetch(`${API}/api/auth/login/`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({username:un,password:pw})});
+    const d=await r.json();
     if(r.ok){
-      localStorage.setItem('access_token',data.access);
-      localStorage.setItem('refresh_token',data.refresh);
-      const pr=await fetch(`${API}/api/auth/register/profile/`,{headers:{'Authorization':`Bearer ${data.access}`}});
-      const profile=await pr.json();
-      localStorage.setItem('user',JSON.stringify(profile));
-      if(profile.role==='admin')window.location.href='admin_dashboard.html';
-      else if(profile.role==='doctor')window.location.href='doctor_dashboard.html';
-      else window.location.href='patient_dashboard.html';
-    }else{showErr(data.detail||'Invalid username or password.')}
+      localStorage.setItem('access_token',d.access);
+      localStorage.setItem('refresh_token',d.refresh);
+      const pr=await fetch(`${API}/api/auth/register/profile/`,{headers:{'Authorization':`Bearer ${d.access}`}});
+      const prof=await pr.json();
+      localStorage.setItem('user',JSON.stringify(prof));
+      if(prof.role==='admin')location.href='admin_dashboard.html';
+      else if(prof.role==='doctor')location.href='doctor_dashboard.html';
+      else location.href='patient_dashboard.html';
+    }else{showErr(d.detail||'Invalid username or password.')}
   }catch(e){showErr('Cannot connect to server. Please try again.')}
-  finally{btn.disabled=false;document.getElementById('btnContent').textContent='Sign In'}
+  finally{btn.disabled=false;document.getElementById('btnTxt').textContent='Sign In'}
 }
 function showErr(m){const e=document.getElementById('errMsg');e.textContent=m;e.style.display='block'}
 const u=JSON.parse(localStorage.getItem('user')||'{}');
 if(localStorage.getItem('access_token')&&u.role){
-  if(u.role==='admin')window.location.href='admin_dashboard.html';
-  else if(u.role==='doctor')window.location.href='doctor_dashboard.html';
-  else window.location.href='patient_dashboard.html';
+  if(u.role==='admin')location.href='admin_dashboard.html';
+  else if(u.role==='doctor')location.href='doctor_dashboard.html';
+  else location.href='patient_dashboard.html';
 }
 </script>
 </body>
