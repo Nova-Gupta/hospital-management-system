@@ -1,7 +1,37 @@
 __pycache__
 *.pyc
 *.pyo
+*.pyd
+
 .env
+.env.prod
+.env.local
+.env.*.local
+
 .git
 .gitignore
+.github
+
 *.md
+*.ctl
+*.log
+
+# Dev-only compose files
+docker-compose.yml
+docker-compose.prod.yml
+docker-compose.override.yml
+
+# Nginx config (only needed by nginx container, not app)
+nginx/
+
+# Test & tooling
+.pytest_cache
+.coverage
+htmlcov/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Collected static (rebuilt at deploy time)
+staticfiles/
