@@ -1,8 +1,8 @@
 # 🏥 Hospital Management System
 
-A scalable, production-ready full-stack application built with **Django REST Framework** on the backend and a **fully responsive HTML/CSS/JS frontend**. It manages hospital operations including doctor and patient management, appointment scheduling, prescriptions, and billing — with JWT authentication, role-based access control, Redis caching, and deployment on Render.
+A scalable, production-ready full-stack application built with **Django REST Framework** on the backend and a **fully responsive HTML/CSS/JS frontend**. It manages hospital operations including doctor and patient management, appointment scheduling, prescriptions, and billing — with JWT authentication, role-based access control, Redis caching, and deployment on AWS EC2 with Docker and GitHub Actions CI/CD.
 
-> 🌐 **Live Demo:** [https://hospital-management-system-y46v.onrender.com/static/login.html](https://hospital-management-system-y46v.onrender.com/static/login.html)
+> 🌐 **Live Demo:** [http://13.234.39.155/static/login.html](http://13.234.39.155/static/login.html)
 
 ---
 
@@ -19,6 +19,7 @@ A scalable, production-ready full-stack application built with **Django REST Fra
 - [Environment Variables](#environment-variables)
 - [Running with Docker](#running-with-docker)
 - [Deployment](#deployment)
+- [CI/CD Pipeline](#cicd-pipeline)
 - [Security](#security)
 - [Performance Optimizations](#performance-optimizations)
 - [Future Scope](#future-scope)
@@ -43,7 +44,9 @@ The Hospital Management System provides a complete platform for managing hospita
 | Static Files | Whitenoise |
 | Frontend | HTML5, CSS3, Vanilla JavaScript (self-contained) |
 | Containerization | Docker, Docker Compose |
-| Deployment | Render |
+| Reverse Proxy | Nginx |
+| Cloud | AWS EC2, AWS ECR |
+| CI/CD | GitHub Actions |
 
 ---
 
@@ -68,11 +71,11 @@ The Hospital Management System provides a complete platform for managing hospita
 - Loading states and empty state displays
 - Horizontal table scroll on small screens
 
-### Security
-- Admin accounts cannot be registered via the public API or frontend
-- All API secrets and credentials via environment variables
-- HTTPS enforced on Render
-- Password hashing via Django's PBKDF2 + SHA256
+### DevOps
+- Dockerized all services (web, db, redis, nginx)
+- GitHub Actions CI/CD pipeline (test → build → deploy)
+- Docker images stored in AWS ECR
+- Auto-deploy to AWS EC2 on every push to main
 
 ---
 
@@ -82,34 +85,40 @@ The Hospital Management System provides a complete platform for managing hospita
 hospital-management-system/
 ├── Dockerfile
 ├── docker-compose.yml
-├── render.yaml
+├── docker-compose.prod.yml
 ├── requirements.txt
 ├── manage.py
-├── .env
 ├── .env.example
 ├── .gitignore
 ├── README.md
 │
-├── frontend/                        ← Responsive web frontend
-│   ├── login.html                   ← Two-column desktop, single-column mobile
-│   ├── register.html                ← Doctor/Patient registration only
-│   ├── admin_dashboard.html         ← Admin portal
-│   ├── doctor_dashboard.html        ← Doctor portal
-│   ├── patient_dashboard.html       ← Patient portal
-│   └── shared.css                   ← Base styles (legacy, dashboards self-contained)
+├── .github/
+│   └── workflows/
+│       └── deploy.yml           ← CI/CD pipeline
+│
+├── nginx/
+│   ├── Dockerfile
+│   └── nginx.conf               ← Reverse proxy config
+│
+├── frontend/                    ← Responsive web frontend
+│   ├── login.html
+│   ├── register.html
+│   ├── admin_dashboard.html
+│   ├── doctor_dashboard.html
+│   └── patient_dashboard.html
 │
 └── hospital/
     ├── settings.py
     ├── urls.py
     ├── wsgi.py
     └── apps/
-        ├── accounts/                ← Custom User model, JWT auth, signals
-        ├── doctors/                 ← Doctor profiles
-        ├── patients/                ← Patient profiles
-        ├── appointments/            ← Appointment booking
-        ├── prescriptions/           ← Prescription records
-        ├── billing/                 ← Invoicing and payments
-        └── dashboard/               ← Analytics with Redis caching
+        ├── accounts/
+        ├── doctors/
+        ├── patients/
+        ├── appointments/
+        ├── prescriptions/
+        ├── billing/
+        └── dashboard/
 ```
 
 ---
@@ -132,18 +141,18 @@ User (Custom AbstractUser)
       └── medical_history
 
 Appointment (ForeignKey → Doctor, Patient)
- ├── appointment_date + appointment_time  ← unique together per doctor
+ ├── appointment_date + appointment_time
  ├── status: pending | confirmed | completed | cancelled
  └── reason, notes
 
 Prescription (OneToOne → Appointment)
  ├── diagnosis
- ├── medications: JSONField [{name, dosage, frequency, duration}]
+ ├── medications: JSONField
  └── instructions, follow_up_date
 
 Invoice (OneToOne → Appointment)
  ├── amount, tax, discount
- ├── total_amount  ← auto-calculated on save
+ ├── total_amount
  ├── payment_status: pending | paid | cancelled
  └── payment_method: cash | card | online | insurance
 ```
@@ -155,7 +164,7 @@ Invoice (OneToOne → Appointment)
 ### Auth
 | Method | Endpoint | Access | Description |
 |---|---|---|---|
-| POST | `/api/auth/register/` | Public | Register as doctor or patient only |
+| POST | `/api/auth/register/` | Public | Register as doctor or patient |
 | POST | `/api/auth/login/` | Public | Login, receive JWT tokens |
 | POST | `/api/auth/refresh/` | Public | Refresh access token |
 | GET | `/api/auth/register/profile/` | Authenticated | Get current user profile |
@@ -167,7 +176,6 @@ Invoice (OneToOne → Appointment)
 | GET | `/api/doctors/` | Any | List all doctors |
 | GET | `/api/doctors/me/` | Doctor | Get own profile |
 | PUT | `/api/doctors/me/` | Doctor | Update own profile |
-| GET | `/api/doctors/available/` | Any | List available doctors |
 
 ### Patients
 | Method | Endpoint | Access | Description |
@@ -179,119 +187,76 @@ Invoice (OneToOne → Appointment)
 ### Appointments
 | Method | Endpoint | Access | Description |
 |---|---|---|---|
-| POST | `/api/appointments/` | Patient | Book an appointment |
-| GET | `/api/appointments/` | Any | List own appointments (role-filtered) |
+| POST | `/api/appointments/` | Patient | Book appointment |
+| GET | `/api/appointments/` | Any | List own appointments |
 | PATCH | `/api/appointments/{id}/update_status/` | Doctor / Admin | Update status |
-
-### Prescriptions
-| Method | Endpoint | Access | Description |
-|---|---|---|---|
-| POST | `/api/prescriptions/` | Doctor / Admin | Create prescription |
-| GET | `/api/prescriptions/` | Any | List own prescriptions (role-filtered) |
 
 ### Billing
 | Method | Endpoint | Access | Description |
 |---|---|---|---|
 | POST | `/api/billing/` | Admin | Create invoice |
-| GET | `/api/billing/` | Any | List own invoices (role-filtered) |
-| PATCH | `/api/billing/{id}/mark_paid/` | Admin | Mark invoice as paid |
+| GET | `/api/billing/` | Any | List own invoices |
+| PATCH | `/api/billing/{id}/mark_paid/` | Admin | Mark as paid |
 
 ### Dashboard
 | Method | Endpoint | Access | Description |
 |---|---|---|---|
-| GET | `/api/dashboard/` | Admin | System analytics (Redis cached, 5 min TTL) |
+| GET | `/api/dashboard/` | Admin | System analytics (Redis cached) |
 
 ---
 
 ## 🖥 Frontend
 
-The frontend is a set of **fully self-contained HTML files** served via Django's static files (Whitenoise). Every file has all CSS embedded inline — no external stylesheet dependencies.
-
-### Pages
-
 | Page | URL | Description |
 |---|---|---|
-| Login | `/static/login.html` | Two-column on desktop, single-column on mobile |
-| Register | `/static/register.html` | Doctor or Patient only |
-| Admin Dashboard | `/static/admin_dashboard.html` | Stats, doctors, patients, appointments, billing |
-| Doctor Dashboard | `/static/doctor_dashboard.html` | Appointments, prescriptions, profile |
-| Patient Dashboard | `/static/patient_dashboard.html` | Book appointments, prescriptions, billing |
-
-### Responsive Behaviour
-
-| Screen | Behaviour |
-|---|---|
-| Mobile (< 768px) | Sidebar hidden, hamburger ☰ toggles it, stats 2-column, tables scroll |
-| Tablet (768px–1100px) | Sidebar visible, two-column sections collapse to one |
-| Desktop (> 1100px) | Full layout with sidebar, 3–4 column stats grid |
-
-### Authentication Flow
-
-```
-Login → JWT stored in localStorage
-      → GET /api/auth/register/profile/
-      → role === 'admin'   → admin_dashboard.html
-      → role === 'doctor'  → doctor_dashboard.html
-      → role === 'patient' → patient_dashboard.html
-```
-
-### Security
-
-- Admin role **removed** from registration dropdown
-- Backend **rejects** any API attempt to register with `role: admin`
-- Admins can only be created by a superuser via the Django admin panel at `/admin/`
+| Login | `/static/login.html` | Role-based login |
+| Register | `/static/register.html` | Doctor or Patient registration |
+| Admin Dashboard | `/static/admin_dashboard.html` | Full system overview |
+| Doctor Dashboard | `/static/doctor_dashboard.html` | Appointments and prescriptions |
+| Patient Dashboard | `/static/patient_dashboard.html` | Book appointments and billing |
 
 ---
 
 ## 🚀 Getting Started
 
 ### Prerequisites
+- Docker and Docker Compose
+- Git
 
-- [Docker](https://www.docker.com/get-started) and Docker Compose
-- [Git](https://git-scm.com/)
-
-### Clone and Run
+### Local Development
 
 ```bash
-git clone https://github.com/YOUR_USERNAME/hospital-management-system.git
+git clone https://github.com/Nova-Gupta/hospital-management-system.git
 cd hospital-management-system
 
-# Create your env file
 cp .env.example .env
 # Edit .env with your values
 
-# Build and start all services
 docker-compose up --build
 ```
 
-Visit: **http://localhost:8000/static/login.html**
+Visit: **http://localhost/static/login.html**
 
 ---
 
 ## ⚙️ Environment Variables
 
-Create a `.env` file in the project root:
-
 ```env
-# Django
-SECRET_KEY=your-super-secret-key-change-this-in-production
-DEBUG=True
-ALLOWED_HOSTS=localhost,127.0.0.1
+SECRET_KEY=your-secret-key
+DEBUG=False
+ALLOWED_HOSTS=your-ec2-ip
 
-# Database
 DB_NAME=hospital_db
-DB_USER=postgres
-DB_PASSWORD=hospital_pass
+DB_USER=hospital_user
+DB_PASSWORD=your-password
 DB_HOST=db
 DB_PORT=5432
 
-# Redis
 REDIS_URL=redis://redis:6379/1
 
-# Auto-created superuser on deploy
-DJANGO_SUPERUSER_USERNAME=admin
-DJANGO_SUPERUSER_EMAIL=admin@hospital.com
-DJANGO_SUPERUSER_PASSWORD=YourStrongPassword@123
+ECR_REGISTRY=your-ecr-registry
+ECR_REPOSITORY=hospital-management-system
+IMAGE_TAG=latest
 ```
 
 ---
@@ -299,49 +264,65 @@ DJANGO_SUPERUSER_PASSWORD=YourStrongPassword@123
 ## 🐳 Running with Docker
 
 ```bash
-# Start all containers (web, PostgreSQL, Redis)
-docker-compose up --build
-
-# Run in background
+# Start all containers
 docker-compose up --build -d
 
 # Stop containers
 docker-compose down
 
-# Stop and wipe all data (fresh start)
-docker-compose down -v
+# View logs
+docker-compose logs -f
 ```
-
-### Services started
-
-| Service | Port | Description |
-|---|---|---|
-| web | 8000 | Django + Gunicorn |
-| db | 5432 | PostgreSQL 15 |
-| redis | 6379 | Redis 7 |
 
 ---
 
 ## ☁️ Deployment
 
-Deployed on **Render** using `render.yaml` blueprint.
+Deployed on **AWS EC2** with Docker, Nginx, and GitHub Actions CI/CD.
 
 ### Live URLs
 
 ```
-Frontend  →  https://hospital-management-system-y46v.onrender.com/static/login.html
-API       →  https://hospital-management-system-y46v.onrender.com/api/
-Admin     →  https://hospital-management-system-y46v.onrender.com/admin/
+Frontend  →  http://13.234.39.155/static/login.html
+API       →  http://13.234.39.155/api/
+Admin     →  http://13.234.39.155/admin/
 ```
 
-### Deploy your own
+### Infrastructure
+- **AWS EC2** — t2.micro Ubuntu 26.04 instance
+- **AWS ECR** — Docker image registry
+- **Docker Compose** — Container orchestration
+- **Nginx** — Reverse proxy serving static files and proxying to Gunicorn
 
-1. Push your code to GitHub
-2. Go to [render.com](https://render.com) → **New → Blueprint**
-3. Connect your GitHub repository
-4. Render auto-detects `render.yaml` and provisions the web service, PostgreSQL, and Redis
-5. Add environment variables in the Render dashboard
-6. Deploy — Render runs `migrate`, `collectstatic`, and starts Gunicorn automatically
+---
+
+## 🔄 CI/CD Pipeline
+
+Every push to `main` triggers the GitHub Actions pipeline:
+
+```
+Push to main
+    ↓
+1. test          → Run Django tests with PostgreSQL + Redis
+    ↓
+2. build-and-push → Build Docker image → Push to AWS ECR
+    ↓
+3. deploy        → SSH into EC2 → Pull new image → Restart containers
+                   → Run migrations → Collect static files
+```
+
+### Required GitHub Secrets
+
+| Secret | Description |
+|---|---|
+| `AWS_ACCESS_KEY_ID` | AWS IAM access key |
+| `AWS_SECRET_ACCESS_KEY` | AWS IAM secret key |
+| `AWS_REGION` | e.g. ap-south-1 |
+| `ECR_REGISTRY` | ECR registry URL |
+| `ECR_REPOSITORY` | ECR repository name |
+| `EC2_HOST` | EC2 Elastic IP |
+| `EC2_USER` | EC2 username (ubuntu) |
+| `EC2_SSH_KEY` | EC2 private key (.pem contents) |
 
 ---
 
@@ -349,13 +330,11 @@ Admin     →  https://hospital-management-system-y46v.onrender.com/admin/
 
 | Measure | Implementation |
 |---|---|
-| Authentication | JWT with token blacklisting on logout |
-| Admin registration | Blocked at both frontend and API level |
+| Authentication | JWT with token blacklisting |
+| Admin registration | Blocked at frontend and API level |
 | Role enforcement | Permission classes on every endpoint |
 | Secrets | All credentials via environment variables |
-| HTTPS | Enforced by Render in production |
 | Password hashing | Django PBKDF2 + SHA256 |
-| Production flags | `DEBUG=False`, `SECURE_SSL_REDIRECT=False` (Render handles SSL) |
 
 ---
 
@@ -364,24 +343,22 @@ Admin     →  https://hospital-management-system-y46v.onrender.com/admin/
 | Optimization | Detail |
 |---|---|
 | Redis caching | Dashboard stats cached for 5 minutes |
-| `select_related()` | Applied on all ViewSets to prevent N+1 queries |
-| Aggregation | Revenue totals use Django `Sum()` |
-| Pagination | All list endpoints return 10 items per page |
-| Gunicorn workers | 3 workers for concurrent request handling |
-| Whitenoise | Compressed static file serving with long-lived cache headers |
+| select_related() | Applied on all ViewSets |
+| Gunicorn workers | 3 workers for concurrent requests |
+| Whitenoise | Compressed static file serving |
+| Nginx | Reverse proxy with static file caching |
 
 ---
 
 ## 🔮 Future Scope
 
-- **Celery + Redis** — async email notifications on appointment booking/confirmation
-- **React / Next.js frontend** — full SPA connecting to the existing API
-- **Load balancing** — multiple Gunicorn instances behind a reverse proxy
-- **Read replicas** — separate read/write database connections for scale
-- **Mobile app** — React Native app using the same REST API
+- Domain name + SSL/HTTPS with Let's Encrypt
+- Celery for async email notifications
+- React / Next.js frontend
+- Mobile app with React Native
 
 ---
 
 ## 👨‍💻 Author
 
-Built with ❤️ using Django REST Framework, PostgreSQL, Redis, Docker, and Vanilla JS.
+Built with ❤️ using Django REST Framework, PostgreSQL, Redis, Docker, Nginx, AWS EC2, and GitHub Actions.
