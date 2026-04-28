@@ -122,13 +122,13 @@ jobs:
             export ECR_REPOSITORY=${{ secrets.ECR_REPOSITORY }}
             export IMAGE_TAG=$IMAGE_TAG
 
-            docker compose -f docker-compose.prod.yml pull web
-            docker compose -f docker-compose.prod.yml up -d --no-deps --build nginx web
+            docker compose -f docker-compose.prod.yml --env-file .env.prod pull web
+            docker compose -f docker-compose.prod.yml --env-file .env.prod up -d --no-deps --build nginx web
 
-            docker compose -f docker-compose.prod.yml exec -T web \
+            docker compose -f docker-compose.prod.yml --env-file .env.prod exec -T web \
               python manage.py migrate --noinput
 
-            docker compose -f docker-compose.prod.yml exec -T web \
-              python manage.py collectstatic --noinput
+            docker compose -f docker-compose.prod.yml --env-file .env.prod exec -T web \
+              python manage.py collectstatic --noinput --clear
 
             docker image prune -f
