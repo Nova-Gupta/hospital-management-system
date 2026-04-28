@@ -125,7 +125,7 @@ CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
     "http://127.0.0.1:3000",
     "http://127.0.0.1:5500",
-    "https://hospital-management-system-y46v.onrender.com",
+    "http://13.234.39.155",
 ]
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
