@@ -113,7 +113,8 @@ jobs:
             set -e
             cd /home/ubuntu/hospital-management-system
 
-            git pull origin main
+            git fetch origin
+            git reset --hard origin/main
 
             aws ecr get-login-password --region ${{ secrets.AWS_REGION }} | \
               docker login --username AWS --password-stdin ${{ secrets.ECR_REGISTRY }}
