@@ -2,7 +2,7 @@
 
 A scalable, production-ready full-stack application built with **Django REST Framework** on the backend and a **fully responsive HTML/CSS/JS frontend**. It manages hospital operations including doctor and patient management, appointment scheduling, prescriptions, and billing — with JWT authentication, role-based access control, Redis caching, and deployment on AWS EC2 with Docker and GitHub Actions CI/CD.
 
-> 🌐 **Live Demo:** [http://13.234.39.155/static/login.html](http://13.234.39.155/static/login.html)
+> 🌐 **Live Demo:** [https://nova-hospital.duckdns.org/static/login.html](https://nova-hospital.duckdns.org/static/login.html)
 
 ---
 
@@ -283,9 +283,9 @@ Deployed on **AWS EC2** with Docker, Nginx, and GitHub Actions CI/CD.
 ### Live URLs
 
 ```
-Frontend  →  http://13.234.39.155/static/login.html
-API       →  http://13.234.39.155/api/
-Admin     →  http://13.234.39.155/admin/
+Frontend  →  https://nova-hospital.duckdns.org/static/login.html
+API       →  https://nova-hospital.duckdns.org/api/
+Admin     →  https://nova-hospital.duckdns.org/admin/
 ```
 
 ### Infrastructure
